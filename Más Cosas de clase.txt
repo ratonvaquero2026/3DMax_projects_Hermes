@@ -1,0 +1,29 @@
+Alt + botón izquierdo del ratón para quitar enlace entre nodos
+Qué es heiss map?
+
+Añadir un tint
+
+En los otros, multiplicar.
+Diferencia entre vector y float
+textcoord es el tileado
+
+hacernos un discord
+Nodo de Name route, te crea un 
+
+RIGGING EN MAYA
+Para emparentar hay que buscar el hueso indicado de la pierna y elegir pelvis y con "P" emparentar.
+Para duplicar el hueso de la pierna, hay que abrir en:
+Rigging, Skeleton, eje yz y apply.
+
+Concepto para riggear
+
+IK/FK switcher
+FK: forward kinematic
+IK: dejar mano quieta
+Skinning
+Script en Phyton para hacer IK/FK eautomático
+
+SKINNING
+Q_selección
+mixamo.com
+Asset para fusionar animaciones: AnimationBlueprint

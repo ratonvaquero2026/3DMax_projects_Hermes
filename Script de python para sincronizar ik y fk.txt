@@ -1,0 +1,55 @@
+import maya.cmds as cmds
+
+def ik_fk_switch(side, limb, switch_attr_path):
+    """
+    side: 'L' o 'R'
+    limb: 'arm' o 'leg'
+    switch_attr_path: El control y atributo que tiene el switch (ej: 'control_anim.IKFK')
+    """
+    
+    # Nombres de ejemplo (ajusta según tu rig)
+    ik_handle = "{}_{_IK_hdl".format(limb, side)
+    pole_vector = "{}_{}_PV_ctrl".format(limb, side)
+    
+    fk_ctrls = ["{}_{}_FK_01_ctrl".format(limb, side), 
+                 "{}_{}_FK_02_ctrl".format(limb, side), 
+                 "{}_{}_FK_03_ctrl".format(limb, side)]
+                 
+    ik_joints = ["{}_{}_IK_01_jnt".format(limb, side), 
+                  "{}_{}_IK_02_jnt".format(limb, side), 
+                  "{}_{}_IK_03_jnt".format(limb, side)]
+                  
+    result_joints = ["{}_{}_RES_01_jnt".format(limb, side), 
+                      "{}_{}_RES_02_jnt".format(limb, side), 
+                      "{}_{}_RES_03_jnt".format(limb, side)]
+
+    # 1. Leer el estado actual (0 = IK, 1 = FK)
+    current_state = cmds.getAttr(switch_attr_path)
+
+    if current_state < 0.5: # Estamos en IK, vamos a cambiar a FK
+        print("Cambiando a FK...")
+        for i in range(len(fk_ctrls)):
+            # Obtener rotación de los huesos Result (que están en IK)
+            rot = cmds.xform(result_joints[i], query=True, ws=True, ro=True)
+            # Aplicar a los controles FK
+            cmds.xform(fk_ctrls[i], ws=True, ro=rot)
+        
+        # Cambiar el atributo a FK
+        cmds.setAttr(switch_attr_path, 1)
+
+    else: # Estamos en FK, vamos a cambiar a IK
+        print("Cambiando a IK...")
+        # 1. Match IK Handle a la muñeca/tobillo (hueso 3)
+        pos = cmds.xform(result_joints[2], query=True, ws=True, t=True)
+        cmds.xform(ik_handle, ws=True, t=pos)
+        
+        # 2. Match Pole Vector (esto es una versión simplificada)
+        # En rigs profesionales se usa cálculo de vectores para evitar el "pop"
+        pv_pos = cmds.xform(result_joints[1], query=True, ws=True, t=True)
+        cmds.xform(pole_vector, ws=True, t=pv_pos) 
+        
+        # Cambiar el atributo a IK
+        cmds.setAttr(switch_attr_path, 0)
+
+# Ejemplo de uso:
+# ik_fk_switch('L', 'arm', 'L_arm_settings_ctrl.IKFK_Blend')
